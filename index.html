@@ -230,6 +230,9 @@
                 picture: 'https://ui-avatars.com/api/?name=Demo+User&background=a855f7&color=fff&size=128'
             };
 
+            // Clear any existing demo data to force fresh demo data load
+            localStorage.removeItem('habitflow_demo_user');
+
             // Show main app
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
