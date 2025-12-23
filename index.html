@@ -228,6 +228,7 @@
         let currentHabitType = 'good';
         let weeklyChart = null;
         let monthlyChart = null;
+        let isUpdatingCharts = false;
 
         // Demo Login Function
         function demoLogin() {
@@ -419,7 +420,7 @@
                 goodHabits = data.goodHabits || [];
                 badHabits = data.badHabits || [];
             } else {
-                // Initialize with sample habits and demo data for new users
+                // Auto-load demo data for new users
                 const today = new Date();
                 
                 // Generate logs for the past 30 days with realistic patterns
@@ -430,7 +431,6 @@
                         date.setDate(date.getDate() - i);
                         const dateStr = date.toISOString().split('T')[0];
                         
-                        // Add log based on consistency (0.7 = 70% completion rate)
                         if (Math.random() < consistency) {
                             logs.push({ 
                                 date: dateStr, 
@@ -448,7 +448,6 @@
                         date.setDate(date.getDate() - i);
                         const dateStr = date.toISOString().split('T')[0];
                         
-                        // Add relapse based on frequency (0.15 = relapse 15% of days)
                         if (Math.random() < frequency) {
                             relapses.push({ 
                                 date: dateStr, 
@@ -738,105 +737,112 @@
         }
 
         function updateAnalytics() {
-            // Weekly Chart
-            const weeklyData = getWeeklyData();
-            if (weeklyChart) weeklyChart.destroy();
-            weeklyChart = new Chart(document.getElementById('weeklyChart'), {
-                type: 'bar',
-                data: {
-                    labels: weeklyData.map(d => d.date),
-                    datasets: [{
-                        label: 'Good Habits',
-                        data: weeklyData.map(d => d.good),
-                        backgroundColor: 'rgba(168, 85, 247, 0.8)'
-                    }, {
-                        label: 'Bad Relapses',
-                        data: weeklyData.map(d => d.bad),
-                        backgroundColor: 'rgba(236, 72, 153, 0.8)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        x: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+            if (isUpdatingCharts) return;
+            isUpdatingCharts = true;
+
+            setTimeout(() => {
+                // Weekly Chart
+                const weeklyData = getWeeklyData();
+                if (weeklyChart) weeklyChart.destroy();
+                weeklyChart = new Chart(document.getElementById('weeklyChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: weeklyData.map(d => d.date),
+                        datasets: [{
+                            label: 'Good Habits',
+                            data: weeklyData.map(d => d.good),
+                            backgroundColor: 'rgba(168, 85, 247, 0.8)'
+                        }, {
+                            label: 'Bad Relapses',
+                            data: weeklyData.map(d => d.bad),
+                            backgroundColor: 'rgba(236, 72, 153, 0.8)'
+                        }]
                     },
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af' } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#9ca3af' } }
+                        }
                     }
-                }
-            });
+                });
 
-            // Monthly Chart
-            const monthlyData = getMonthlyData();
-            if (monthlyChart) monthlyChart.destroy();
-            monthlyChart = new Chart(document.getElementById('monthlyChart'), {
-                type: 'line',
-                data: {
-                    labels: monthlyData.map(d => d.date),
-                    datasets: [{
-                        label: 'Completion %',
-                        data: monthlyData.map(d => d.completion),
-                        borderColor: '#22d3ee',
-                        backgroundColor: 'rgba(34, 211, 238, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, max: 100, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        x: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                // Monthly Chart
+                const monthlyData = getMonthlyData();
+                if (monthlyChart) monthlyChart.destroy();
+                monthlyChart = new Chart(document.getElementById('monthlyChart'), {
+                    type: 'line',
+                    data: {
+                        labels: monthlyData.map(d => d.date),
+                        datasets: [{
+                            label: 'Completion %',
+                            data: monthlyData.map(d => d.completion),
+                            borderColor: '#22d3ee',
+                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
                     },
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af' } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, max: 100, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#9ca3af' } }
+                        }
                     }
-                }
-            });
+                });
 
-            // Good Habits Stats
-            document.getElementById('goodHabitsStats').innerHTML = goodHabits.length === 0 
-                ? '<p class="text-gray-400 text-center py-8">No good habits yet. Start building!</p>'
-                : goodHabits.map(habit => `
-                    <div class="border-b border-gray-700 pb-4 last:border-0">
-                        <h4 class="font-semibold mb-2">${habit.name}</h4>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p class="text-gray-400">Total Completions</p>
-                                <p class="text-purple-300 font-semibold">${habit.logs.length}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-400">Current Streak</p>
-                                <p class="text-purple-300 font-semibold">${habit.currentStreak} days</p>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            // Bad Habits Stats
-            document.getElementById('badHabitsStats').innerHTML = badHabits.length === 0
-                ? '<p class="text-gray-400 text-center py-8">No bad habits tracked yet.</p>'
-                : badHabits.map(habit => {
-                    const daysSince = calculateCleanStreak(habit.relapses);
-                    return `
+                // Good Habits Stats
+                document.getElementById('goodHabitsStats').innerHTML = goodHabits.length === 0 
+                    ? '<p class="text-gray-400 text-center py-8">No good habits yet. Start building!</p>'
+                    : goodHabits.map(habit => `
                         <div class="border-b border-gray-700 pb-4 last:border-0">
                             <h4 class="font-semibold mb-2">${habit.name}</h4>
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                    <p class="text-gray-400">Days Clean</p>
-                                    <p class="text-green-300 font-semibold">${daysSince} days</p>
+                                    <p class="text-gray-400">Total Completions</p>
+                                    <p class="text-purple-300 font-semibold">${habit.logs.length}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-400">Total Relapses</p>
-                                    <p class="text-pink-300 font-semibold">${habit.relapses.length}</p>
+                                    <p class="text-gray-400">Current Streak</p>
+                                    <p class="text-purple-300 font-semibold">${habit.currentStreak} days</p>
                                 </div>
                             </div>
                         </div>
-                    `;
-                }).join('');
+                    `).join('');
+
+                // Bad Habits Stats
+                document.getElementById('badHabitsStats').innerHTML = badHabits.length === 0
+                    ? '<p class="text-gray-400 text-center py-8">No bad habits tracked yet.</p>'
+                    : badHabits.map(habit => {
+                        const daysSince = calculateCleanStreak(habit.relapses);
+                        return `
+                            <div class="border-b border-gray-700 pb-4 last:border-0">
+                                <h4 class="font-semibold mb-2">${habit.name}</h4>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="text-gray-400">Days Clean</p>
+                                        <p class="text-green-300 font-semibold">${daysSince} days</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400">Total Relapses</p>
+                                        <p class="text-pink-300 font-semibold">${habit.relapses.length}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                isUpdatingCharts = false;
+            }, 100);
         }
 
         function getWeeklyData() {
