@@ -41,10 +41,145 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
         }
+
+        /* Intro Animation Styles */
+        #introScreen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a0a2e 50%, #0f0f1e 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeOut 0.8s ease-in-out 4.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .intro-content {
+            text-align: center;
+        }
+
+        .intro-text {
+            font-size: 1.5rem;
+            color: #9ca3af;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .aeborn-logo {
+            width: 300px;
+            height: auto;
+            opacity: 0;
+            animation: logoZoom 1.2s ease-out 1s forwards;
+            filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.6));
+        }
+
+        @keyframes logoZoom {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .habitflow-logo-intro {
+            opacity: 0;
+            animation: habitflowAppear 1s ease-out 2.8s forwards;
+        }
+
+        @keyframes habitflowAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotate(-10deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .logo-icon-intro {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #a855f7 0%, #22d3ee 100%);
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+        }
+
+        .habitflow-title-intro {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #a855f7 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
 <body>
     <div class="fixed inset-0 grid-bg pointer-events-none"></div>
+    
+    <!-- Intro Splash Screen -->
+    <div id="introScreen">
+        <div class="intro-content">
+            <!-- "Presented by" text -->
+            <div class="intro-text">
+                HabitFlow Presented to You by
+            </div>
+            
+            <!-- AE.BORN Logo -->
+            <img src="logo.png" alt="AE.BORN" class="aeborn-logo"
+                 onerror="this.style.display='none'; document.getElementById('aebornFallback').style.display='block';">
+            
+            <!-- Fallback if image doesn't load -->
+            <div id="aebornFallback" style="display: none;" class="aeborn-logo">
+                <div style="background: white; padding: 2rem; border-radius: 1rem;">
+                    <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                        <text x="100" y="50" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#000">AE.BORN</text>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- HabitFlow Logo appears after -->
+            <div class="habitflow-logo-intro" style="margin-top: 3rem;">
+                <div class="logo-icon-intro">
+                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h1 class="habitflow-title-intro">HabitFlow</h1>
+            </div>
+        </div>
+    </div>
     
     <!-- Login Screen -->
     <div id="loginScreen" class="relative min-h-screen flex items-center justify-center p-4">
@@ -61,18 +196,24 @@
                 <p class="text-gray-400">Transform your life, one habit at a time</p>
             </div>
             
-            <div id="googleSignInButton" class="flex justify-center mb-4"></div>
-            
-            <div class="text-center my-4">
-                <span class="text-gray-500 text-sm">or</span>
-            </div>
-            
-            <button onclick="demoLogin()" class="w-full bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg">
+            <!-- Demo Mode Button (Primary) -->
+            <button onclick="demoLogin()" class="w-full bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
-                Try Demo Mode
+                Start Tracking Habits
             </button>
+            
+            <!-- Optional: Google Sign-In (if configured) -->
+            <details class="mt-4">
+                <summary class="text-sm text-gray-400 cursor-pointer text-center hover:text-gray-300">
+                    Advanced: Sign in with Google
+                </summary>
+                <div id="googleSignInButton" class="flex justify-center mt-4"></div>
+                <p class="text-xs text-gray-500 text-center mt-2">
+                    Requires Google OAuth setup
+                </p>
+            </details>
             
             <p class="text-xs text-gray-500 text-center mt-6">
                 By continuing, you agree to our Terms of Service and Privacy Policy
