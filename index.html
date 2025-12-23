@@ -51,7 +51,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: fadeOut 0.8s ease-in-out 4.5s forwards;
+            animation: fadeOut 0.8s ease-in-out 6s forwards;
         }
 
         @keyframes fadeOut {
@@ -63,6 +63,7 @@
 
         .intro-content {
             text-align: center;
+            position: relative;
         }
 
         .intro-text {
@@ -84,22 +85,15 @@
             }
         }
 
-        .aeborn-logo {
-            width: 300px;
-            height: auto;
+        .aeborn-logo-container {
             opacity: 0;
-            animation: logoZoom 1.2s ease-out 1s forwards;
-            filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.6));
+            animation: logoFadeIn 1.2s ease-out 1.5s forwards, logoFadeOut 0.6s ease-out 3.5s forwards;
         }
 
-        @keyframes logoZoom {
+        @keyframes logoFadeIn {
             0% {
                 opacity: 0;
-                transform: scale(0.5);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.1);
+                transform: scale(0.8);
             }
             100% {
                 opacity: 1;
@@ -107,19 +101,58 @@
             }
         }
 
-        .habitflow-logo-intro {
-            opacity: 0;
-            animation: habitflowAppear 1s ease-out 2.8s forwards;
+        @keyframes logoFadeOut {
+            to {
+                opacity: 0;
+                transform: scale(1.1);
+            }
         }
 
-        @keyframes habitflowAppear {
+        .aeborn-logo {
+            width: 300px;
+            height: auto;
+            filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.8));
+        }
+
+        /* Gradient Wipe Transition */
+        .wipe-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #a855f7 25%, 
+                #22d3ee 50%, 
+                #a855f7 75%, 
+                transparent 100%);
+            transform: translateX(-100%);
+            animation: wipeAcross 1.2s ease-in-out 4s forwards;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes wipeAcross {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* HabitFlow Logo appears after wipe */
+        .habitflow-logo-intro {
+            opacity: 0;
+            animation: habitflowReveal 0.8s ease-out 4.8s forwards;
+        }
+
+        @keyframes habitflowReveal {
             from {
                 opacity: 0;
-                transform: scale(0.8) rotate(-10deg);
+                transform: scale(0.9);
             }
             to {
                 opacity: 1;
-                transform: scale(1) rotate(0deg);
+                transform: scale(1);
             }
         }
 
@@ -156,21 +189,26 @@
                 HabitFlow Presented to You by
             </div>
             
-            <!-- AE.BORN Logo -->
-            <img src="logo.jpg" alt="AE.BORN" class="aeborn-logo"
-                 onerror="this.style.display='none'; document.getElementById('aebornFallback').style.display='block';">
-            
-            <!-- Fallback if image doesn't load -->
-            <div id="aebornFallback" style="display: none;" class="aeborn-logo">
-                <div style="background: white; padding: 2rem; border-radius: 1rem;">
-                    <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <text x="100" y="50" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#000">AE.BORN</text>
-                    </svg>
+            <!-- AE.BORN Logo Container -->
+            <div class="aeborn-logo-container">
+                <img src="logoooo_00001.png" alt="AE.BORN" class="aeborn-logo" 
+                     onerror="this.style.display='none'; document.getElementById('aebornFallback').style.display='block';">
+                
+                <!-- Fallback if image doesn't load -->
+                <div id="aebornFallback" style="display: none;">
+                    <div style="background: white; padding: 2rem; border-radius: 1rem; display: inline-block;">
+                        <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                            <text x="100" y="50" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#000">AE.BORN</text>
+                        </svg>
+                    </div>
                 </div>
             </div>
             
-            <!-- HabitFlow Logo appears after -->
-            <div class="habitflow-logo-intro" style="margin-top: 3rem;">
+            <!-- Gradient Wipe Overlay -->
+            <div class="wipe-overlay"></div>
+            
+            <!-- HabitFlow Logo appears after wipe -->
+            <div class="habitflow-logo-intro">
                 <div class="logo-icon-intro">
                     <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -504,7 +542,7 @@
         // Google Sign-In Configuration
         function initGoogleSignIn() {
             google.accounts.id.initialize({
-                client_id: '640459337642-ta6r54cs27oat5lh3r8m5psfmsmcboe3.apps.googleusercontent.com', // Replace with your actual client ID
+                client_id: '640459337642-ta6r54cs27oat5lh3r8m5psfmsmcboe3.apps.googleusercontent.com',
                 callback: handleCredentialResponse
             });
 
