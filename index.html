@@ -175,7 +175,15 @@
 
         <!-- Analytics View -->
         <div id="analyticsView" class="hidden relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h2 class="text-3xl font-bold mb-8">Analytics & Insights</h2>
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Analytics & Insights</h2>
+                <button onclick="loadDemoData()" class="btn-primary px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Load Demo Data
+                </button>
+            </div>
 
             <div class="glass rounded-2xl p-6 mb-8">
                 <h3 class="text-xl font-bold mb-6 text-purple-300">Weekly Overview</h3>
@@ -230,9 +238,6 @@
                 picture: 'https://ui-avatars.com/api/?name=Demo+User&background=a855f7&color=fff&size=128'
             };
 
-            // Clear any existing demo data to force fresh demo data load
-            localStorage.removeItem('habitflow_demo_user');
-
             // Show main app
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
@@ -245,6 +250,104 @@
             loadData();
             updateDashboard();
             updateDate();
+        }
+
+        // Load Demo Data Function - manually populate with 30 days of analytics
+        function loadDemoData() {
+            if (!currentUser) return;
+            
+            const today = new Date();
+            
+            // Generate logs for the past 30 days with realistic patterns
+            const generateGoodHabitLogs = (consistency) => {
+                const logs = [];
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    if (Math.random() < consistency) {
+                        logs.push({ 
+                            date: dateStr, 
+                            time: new Date(date.setHours(Math.floor(Math.random() * 12) + 6)).toISOString() 
+                        });
+                    }
+                }
+                return logs;
+            };
+            
+            const generateBadHabitRelapses = (frequency) => {
+                const relapses = [];
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    if (Math.random() < frequency) {
+                        relapses.push({ 
+                            date: dateStr, 
+                            time: new Date(date.setHours(Math.floor(Math.random() * 16) + 8)).toISOString() 
+                        });
+                    }
+                }
+                return relapses;
+            };
+            
+            // Good habits with demo data
+            const meditationLogs = generateGoodHabitLogs(0.85);
+            const exerciseLogs = generateGoodHabitLogs(0.70);
+            const readingLogs = generateGoodHabitLogs(0.60);
+            
+            goodHabits = [
+                { 
+                    id: Date.now(), 
+                    name: 'Morning Meditation', 
+                    logs: meditationLogs,
+                    currentStreak: calculateStreak(meditationLogs).current,
+                    longestStreak: calculateStreak(meditationLogs).longest
+                },
+                { 
+                    id: Date.now() + 1, 
+                    name: 'Exercise', 
+                    logs: exerciseLogs,
+                    currentStreak: calculateStreak(exerciseLogs).current,
+                    longestStreak: calculateStreak(exerciseLogs).longest
+                },
+                { 
+                    id: Date.now() + 2, 
+                    name: 'Reading', 
+                    logs: readingLogs,
+                    currentStreak: calculateStreak(readingLogs).current,
+                    longestStreak: calculateStreak(readingLogs).longest
+                }
+            ];
+            
+            // Bad habits with demo data
+            const socialMediaRelapses = generateBadHabitRelapses(0.20);
+            const junkFoodRelapses = generateBadHabitRelapses(0.15);
+            
+            badHabits = [
+                { 
+                    id: Date.now() + 3, 
+                    name: 'Social Media Addiction', 
+                    relapses: socialMediaRelapses,
+                    daysSinceRelapse: calculateCleanStreak(socialMediaRelapses),
+                    longestClean: 12
+                },
+                { 
+                    id: Date.now() + 4, 
+                    name: 'Junk Food', 
+                    relapses: junkFoodRelapses,
+                    daysSinceRelapse: calculateCleanStreak(junkFoodRelapses),
+                    longestClean: 15
+                }
+            ];
+            
+            saveData();
+            updateDashboard();
+            updateAnalytics();
+            
+            alert('✅ Demo data loaded! 30 days of analytics are now visible in charts.');
         }
 
         // Google Sign-In Configuration
