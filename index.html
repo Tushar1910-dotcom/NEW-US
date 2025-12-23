@@ -51,7 +51,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: fadeOut 0.8s ease-in-out 6s forwards;
+            animation: fadeOut 0.8s ease-in-out 5.5s forwards;
         }
 
         @keyframes fadeOut {
@@ -64,6 +64,8 @@
         .intro-content {
             text-align: center;
             position: relative;
+            width: 100%;
+            max-width: 600px;
         }
 
         .intro-text {
@@ -86,73 +88,58 @@
         }
 
         .aeborn-logo-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             opacity: 0;
-            animation: logoFadeIn 1.2s ease-out 1.5s forwards, logoFadeOut 0.6s ease-out 3.5s forwards;
+            animation: logoFadeIn 1s ease-out 1.5s forwards, logoFadeOut 0.8s ease-out 3s forwards;
         }
 
         @keyframes logoFadeIn {
             0% {
                 opacity: 0;
-                transform: scale(0.8);
+                transform: translate(-50%, -50%) scale(0.8);
             }
             100% {
                 opacity: 1;
-                transform: scale(1);
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
         @keyframes logoFadeOut {
             to {
                 opacity: 0;
-                transform: scale(1.1);
+                transform: translate(-50%, -50%) scale(0.9);
             }
         }
 
         .aeborn-logo {
-            width: 300px;
+            width: 350px;
             height: auto;
-            filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.8));
+            filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.9));
         }
 
-        /* Gradient Wipe Transition */
-        .wipe-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                #a855f7 25%, 
-                #22d3ee 50%, 
-                #a855f7 75%, 
-                transparent 100%);
-            transform: translateX(-100%);
-            animation: wipeAcross 1.2s ease-in-out 4s forwards;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        @keyframes wipeAcross {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        /* HabitFlow Logo appears after wipe */
+        /* HabitFlow Logo Container */
         .habitflow-logo-intro {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             opacity: 0;
-            animation: habitflowReveal 0.8s ease-out 4.8s forwards;
+            animation: habitflowReveal 1s ease-out 4s forwards;
         }
 
         @keyframes habitflowReveal {
             from {
                 opacity: 0;
-                transform: scale(0.9);
+                transform: translate(-50%, -50%) scale(0.85);
+                filter: blur(10px);
             }
             to {
                 opacity: 1;
-                transform: scale(1);
+                transform: translate(-50%, -50%) scale(1);
+                filter: blur(0);
             }
         }
 
@@ -165,16 +152,17 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.9), 0 0 100px rgba(34, 211, 238, 0.5);
         }
 
         .habitflow-title-intro {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
             background: linear-gradient(135deg, #a855f7 0%, #22d3ee 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
         }
     </style>
 </head>
@@ -197,17 +185,14 @@
                 <!-- Fallback if image doesn't load -->
                 <div id="aebornFallback" style="display: none;">
                     <div style="background: white; padding: 2rem; border-radius: 1rem; display: inline-block;">
-                        <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                            <text x="100" y="50" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#000">AE.BORN</text>
+                        <svg width="250" height="100" viewBox="0 0 250 100" xmlns="http://www.w3.org/2000/svg">
+                            <text x="125" y="60" font-family="Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="#000">AE.BORN</text>
                         </svg>
                     </div>
                 </div>
             </div>
             
-            <!-- Gradient Wipe Overlay -->
-            <div class="wipe-overlay"></div>
-            
-            <!-- HabitFlow Logo appears after wipe -->
+            <!-- HabitFlow Logo (appears in same spot with smooth transition) -->
             <div class="habitflow-logo-intro">
                 <div class="logo-icon-intro">
                     <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
