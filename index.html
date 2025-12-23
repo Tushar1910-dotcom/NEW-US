@@ -247,7 +247,7 @@
         // Google Sign-In Configuration
         function initGoogleSignIn() {
             google.accounts.id.initialize({
-                client_id: '640459337642-8r5i0kmgrqoi89tge4ss78b76muf979p.apps.googleusercontent.com', // Replace with your actual client ID
+                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', // Replace with your actual client ID
                 callback: handleCredentialResponse
             });
 
@@ -313,14 +313,96 @@
                 goodHabits = data.goodHabits || [];
                 badHabits = data.badHabits || [];
             } else {
-                // Initialize with sample habits for new users
+                // Initialize with sample habits and demo data for new users
+                const today = new Date();
+                
+                // Generate logs for the past 30 days with realistic patterns
+                const generateGoodHabitLogs = (consistency) => {
+                    const logs = [];
+                    for (let i = 29; i >= 0; i--) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        
+                        // Add log based on consistency (0.7 = 70% completion rate)
+                        if (Math.random() < consistency) {
+                            logs.push({ 
+                                date: dateStr, 
+                                time: new Date(date.setHours(Math.floor(Math.random() * 12) + 6)).toISOString() 
+                            });
+                        }
+                    }
+                    return logs;
+                };
+                
+                const generateBadHabitRelapses = (frequency) => {
+                    const relapses = [];
+                    for (let i = 29; i >= 0; i--) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        
+                        // Add relapse based on frequency (0.15 = relapse 15% of days)
+                        if (Math.random() < frequency) {
+                            relapses.push({ 
+                                date: dateStr, 
+                                time: new Date(date.setHours(Math.floor(Math.random() * 16) + 8)).toISOString() 
+                            });
+                        }
+                    }
+                    return relapses;
+                };
+                
+                // Good habits with demo data
+                const meditationLogs = generateGoodHabitLogs(0.85);
+                const exerciseLogs = generateGoodHabitLogs(0.70);
+                const readingLogs = generateGoodHabitLogs(0.60);
+                
                 goodHabits = [
-                    { id: Date.now(), name: 'Morning Meditation', logs: [], currentStreak: 0, longestStreak: 0 },
-                    { id: Date.now() + 1, name: 'Exercise', logs: [], currentStreak: 0, longestStreak: 0 }
+                    { 
+                        id: Date.now(), 
+                        name: 'Morning Meditation', 
+                        logs: meditationLogs,
+                        currentStreak: calculateStreak(meditationLogs).current,
+                        longestStreak: calculateStreak(meditationLogs).longest
+                    },
+                    { 
+                        id: Date.now() + 1, 
+                        name: 'Exercise', 
+                        logs: exerciseLogs,
+                        currentStreak: calculateStreak(exerciseLogs).current,
+                        longestStreak: calculateStreak(exerciseLogs).longest
+                    },
+                    { 
+                        id: Date.now() + 2, 
+                        name: 'Reading', 
+                        logs: readingLogs,
+                        currentStreak: calculateStreak(readingLogs).current,
+                        longestStreak: calculateStreak(readingLogs).longest
+                    }
                 ];
+                
+                // Bad habits with demo data
+                const socialMediaRelapses = generateBadHabitRelapses(0.20);
+                const junkFoodRelapses = generateBadHabitRelapses(0.15);
+                
                 badHabits = [
-                    { id: Date.now() + 2, name: 'Social Media Addiction', relapses: [], daysSinceRelapse: 0, longestClean: 0 }
+                    { 
+                        id: Date.now() + 3, 
+                        name: 'Social Media Addiction', 
+                        relapses: socialMediaRelapses,
+                        daysSinceRelapse: calculateCleanStreak(socialMediaRelapses),
+                        longestClean: 12
+                    },
+                    { 
+                        id: Date.now() + 4, 
+                        name: 'Junk Food', 
+                        relapses: junkFoodRelapses,
+                        daysSinceRelapse: calculateCleanStreak(junkFoodRelapses),
+                        longestClean: 15
+                    }
                 ];
+                
                 saveData();
             }
         }
