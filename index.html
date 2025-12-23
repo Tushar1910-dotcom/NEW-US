@@ -185,14 +185,23 @@
                 </button>
             </div>
 
-            <div class="glass rounded-2xl p-6 mb-8">
-                <h3 class="text-xl font-bold mb-6 text-purple-300">Weekly Overview</h3>
-                <canvas id="weeklyChart" height="100"></canvas>
-            </div>
+            <!-- Charts in 2 Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Weekly Overview -->
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-xl font-bold mb-4 text-purple-300">Weekly Overview</h3>
+                    <div style="height: 250px;">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
 
-            <div class="glass rounded-2xl p-6 mb-8 border-cyan-500/20">
-                <h3 class="text-xl font-bold mb-6 text-cyan-300">30-Day Completion Rate</h3>
-                <canvas id="monthlyChart" height="100"></canvas>
+                <!-- Monthly Completion -->
+                <div class="glass rounded-2xl p-6 border-cyan-500/20">
+                    <h3 class="text-xl font-bold mb-4 text-cyan-300">30-Day Completion Rate</h3>
+                    <div style="height: 250px;">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
